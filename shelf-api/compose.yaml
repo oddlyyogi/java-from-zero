@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: shelf
+      POSTGRES_USER: shelf
+      POSTGRES_PASSWORD: shelf
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "shelf"]
+      interval: 2s
+      retries: 10
+  api:
+    build: .
+    ports:
+      - "8096:8096"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shelf
+    depends_on:
+      db:
+        condition: service_healthy
